@@ -1,0 +1,103 @@
+[cloudera@quickstart ~]$ cd /usr/lib/hadoop-mapreduce/
+
+[cloudera@quickstart hadoop-mapreduce]$ hadoop jar hadoop-mapreduce-examples.jar wordcount
+Usage: wordcount <in> [<in>...] <out>
+
+[cloudera@quickstart hadoop-mapreduce]$ echo "Hello world in HDFS" > /home/cloudera/testfile1
+
+[cloudera@quickstart hadoop-mapreduce]$ echo "Hadoop word count example in HDFS" > /home/cloudera/testfile2
+[cloudera@quickstart hadoop-mapreduce]$ hdfs dfs -mkdir /user/cloudera/input
+mkdir: `/user/cloudera/input': File exists
+[cloudera@quickstart hadoop-mapreduce]$ hdfs dfs -put /home/cloudera/testfile1 /user/cloudera/input
+put: `/user/cloudera/input/testfile1': File exists
+
+[cloudera@quickstart hadoop-mapreduce]$ hdfs dfs -put /home/cloudera/testfile2 /user/cloudera/input
+put: `/user/cloudera/input/testfile2': File exists
+
+[cloudera@quickstart hadoop-mapreduce]$ hadoop jar hadoop-mapreduce-examples.jar wordcount /user/cloudera/input /user/cloudera/output
+16/02/21 08:16:04 INFO client.RMProxy: Connecting to ResourceManager at /0.0.0.0:8032
+16/02/21 08:16:11 INFO input.FileInputFormat: Total input paths to process : 2
+16/02/21 08:16:13 INFO mapreduce.JobSubmitter: number of splits:2
+16/02/21 08:16:15 INFO mapreduce.JobSubmitter: Submitting tokens for job: job_1456069093270_0001
+16/02/21 08:16:23 INFO impl.YarnClientImpl: Submitted application application_1456069093270_0001
+16/02/21 08:16:24 INFO mapreduce.Job: The url to track the job: http://quickstart.cloudera:8088/proxy/application_1456069093270_0001/
+16/02/21 08:16:24 INFO mapreduce.Job: Running job: job_1456069093270_0001
+16/02/21 08:16:59 INFO mapreduce.Job: Job job_1456069093270_0001 running in uber mode : false
+16/02/21 08:16:59 INFO mapreduce.Job:  map 0% reduce 0%
+16/02/21 08:17:35 INFO mapreduce.Job:  map 100% reduce 0%
+16/02/21 08:17:59 INFO mapreduce.Job:  map 100% reduce 100%
+16/02/21 08:18:00 INFO mapreduce.Job: Job job_1456069093270_0001 completed successfully
+16/02/21 08:18:00 INFO mapreduce.Job: Counters: 49
+	File System Counters
+		FILE: Number of bytes read=120
+		FILE: Number of bytes written=331919
+		FILE: Number of read operations=0
+		FILE: Number of large read operations=0
+		FILE: Number of write operations=0
+		HDFS: Number of bytes read=306
+		HDFS: Number of bytes written=62
+		HDFS: Number of read operations=9
+		HDFS: Number of large read operations=0
+		HDFS: Number of write operations=2
+	Job Counters 
+		Launched map tasks=2
+		Launched reduce tasks=1
+		Data-local map tasks=2
+		Total time spent by all maps in occupied slots (ms)=70407
+		Total time spent by all reduces in occupied slots (ms)=18799
+		Total time spent by all map tasks (ms)=70407
+		Total time spent by all reduce tasks (ms)=18799
+		Total vcore-seconds taken by all map tasks=70407
+		Total vcore-seconds taken by all reduce tasks=18799
+		Total megabyte-seconds taken by all map tasks=72096768
+		Total megabyte-seconds taken by all reduce tasks=19250176
+	Map-Reduce Framework
+		Map input records=2
+		Map output records=10
+		Map output bytes=94
+		Map output materialized bytes=126
+		Input split bytes=252
+		Combine input records=10
+		Combine output records=10
+		Reduce input groups=8
+		Reduce shuffle bytes=126
+		Reduce input records=10
+		Reduce output records=8
+		Spilled Records=20
+		Shuffled Maps =2
+		Failed Shuffles=0
+		Merged Map outputs=2
+		GC time elapsed (ms)=665
+		CPU time spent (ms)=2940
+		Physical memory (bytes) snapshot=507256832
+		Virtual memory (bytes) snapshot=4507381760
+		Total committed heap usage (bytes)=299442176
+	Shuffle Errors
+		BAD_ID=0
+		CONNECTION=0
+		IO_ERROR=0
+		WRONG_LENGTH=0
+		WRONG_MAP=0
+		WRONG_REDUCE=0
+	File Input Format Counters 
+		Bytes Read=54
+	File Output Format Counters 
+		Bytes Written=62
+
+[cloudera@quickstart hadoop-mapreduce]$ hdfs dfs -ls /user/cloudera/output
+Found 2 items
+-rw-r--r--   1 cloudera cloudera          0 2016-02-21 08:17 /user/cloudera/output/_SUCCESS
+-rw-r--r--   1 cloudera cloudera         62 2016-02-21 08:17 /user/cloudera/output/part-r-00000
+
+[cloudera@quickstart hadoop-mapreduce]$ hdfs dfs -cat /user/cloudera/output/part-r-00000   
+HDFS	2   
+Hadoop 1   
+Hello 1    
+count 1
+example	1
+   in 2  
+word 1     
+world 1
+
+[cloudera@quickstart hadoop-mapreduce]$ hdfs dfs -get /user/cloudera/output/part-r-00000 /home/cloudera/wordcount.txt
+[cloudera@quickstart hadoop-mapreduce]$ 
